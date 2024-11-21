@@ -9,7 +9,6 @@ import { IconSymbol } from "@/components/ui/IconSymbol";
 import { useRouter } from "expo-router";
 
 export default function TabTwoScreen() {
-  console.log("TabTwoScreen");
   const router = useRouter();
   return (
     <ParallaxScrollView
