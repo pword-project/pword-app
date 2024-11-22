@@ -6,10 +6,8 @@ import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { IconSymbol } from "@/components/ui/IconSymbol";
-import { useRouter } from "expo-router";
 
-export default function TabTwoScreen() {
-  const router = useRouter();
+export default function Page() {
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: "#D0D0D0", dark: "#353636" }}
@@ -23,25 +21,17 @@ export default function TabTwoScreen() {
       }
     >
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">About</ThemedText>
+        <ThemedText type="title">Explore</ThemedText>
       </ThemedView>
       <ThemedText>
         This app includes example code to help you get started.
       </ThemedText>
       <Collapsible title="File-based routing">
         <ThemedText>
-          This app has three screens:{" "}
+          This app has two screens:{" "}
           <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText>{" "}
           and{" "}
           <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-          <ThemedText
-            type="defaultSemiBold"
-            onPress={() => {
-              router.push("/");
-            }}
-          >
-            app/(tabs)/home
-          </ThemedText>
         </ThemedText>
         <ThemedText>
           The layout file in{" "}
