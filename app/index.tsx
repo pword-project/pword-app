@@ -41,6 +41,7 @@ export default function Page() {
           type="subtitle"
           onPress={() => {
             // console.log("Navigating to about");
+            // testing expo deployment
           }}
         >
           Go to about
