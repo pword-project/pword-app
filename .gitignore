@@ -38,6 +38,4 @@ yarn-error.*
 
 app-example
 
-app.config.ts
-
 *lock*
