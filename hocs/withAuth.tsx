@@ -9,7 +9,7 @@ const withAuth = (Component: JSX.ElementType) => {
 
     const checkIfUserIsLoggedIn = async () => {
       if (!loading && !session) {
-        router.push("/");
+        router.replace("/");
       }
     };
 

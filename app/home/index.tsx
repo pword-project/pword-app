@@ -5,9 +5,11 @@ import { ThemedView } from "@/components/ThemedView";
 import { useAuth } from "@/contexts/AuthContext";
 import withAuth from "@/hocs/withAuth";
 import Screen from "@/components/Screen";
+import { useRouter } from "expo-router";
 
 function Page() {
   const { logout, session } = useAuth();
+  const router = useRouter();
 
   return (
     <Screen>
@@ -16,6 +18,15 @@ function Page() {
           Welcome to your homepage {session?.user.email}
         </ThemedText>
       </ThemedView>
+
+
+      <Pressable
+        onPress={() => {
+          router.replace("/explore");
+        }}
+      >
+        <ThemedText type="link">Go to explore</ThemedText>
+      </Pressable>
 
       <Pressable
         onPress={async () => {

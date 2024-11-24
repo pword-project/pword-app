@@ -37,7 +37,7 @@ export default function SignupForm() {
         return formikHelpers.setStatus({ error: error.message });
       }
 
-      router.push("/");
+      router.replace("/");
     },
   });
 
