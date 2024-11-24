@@ -41,7 +41,7 @@ export default function LoginForm() {
 
       if (!session) Alert.alert('Please check your inbox for email verification!')
 
-      router.push("/home");
+      router.replace("/home");
     },
   });
 

@@ -14,7 +14,7 @@ export default function Page() {
 
   async function checkIfUserIsLoggedIn() {
     if (!loading && session) {
-      router.push("/home");
+      router.replace("/home");
     }
   };
 

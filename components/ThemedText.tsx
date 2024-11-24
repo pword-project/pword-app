@@ -3,12 +3,25 @@ import { Text, type TextProps, StyleSheet } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { PropsWithChildren } from "react";
 import { useFonts } from "expo-font";
-import { Poppins_400Regular, Poppins_500Medium, Poppins_600SemiBold, Poppins_700Bold, Poppins_900Black } from "@expo-google-fonts/poppins";
+import {
+  Poppins_400Regular,
+  Poppins_500Medium,
+  Poppins_600SemiBold,
+  Poppins_700Bold,
+  Poppins_900Black,
+} from "@expo-google-fonts/poppins";
 
 export type ThemedTextProps = TextProps & {
   lightColor?: string;
   darkColor?: string;
-  type?: "default" | "title" | "defaultSemiBold" | "subtitle" | "link" | "smallprint";
+  type?:
+    | "default"
+    | "title"
+    | "defaultSemiBold"
+    | "subtitle"
+    | "link"
+    | "smallprint"
+    | "logo";
 } & PropsWithChildren;
 
 export function ThemedText({
@@ -26,6 +39,7 @@ export function ThemedText({
     Poppins_600SemiBold,
     Poppins_700Bold,
     Poppins_900Black,
+    Danfo: require("../assets/fonts/Danfo.ttf"),
   });
 
   if (!fontsLoaded) {
@@ -42,6 +56,7 @@ export function ThemedText({
         type === "subtitle" ? styles.subtitle : undefined,
         type === "link" ? styles.link : undefined,
         type === "smallprint" ? styles.smallprint : undefined,
+        type === "logo" ? styles.logo : undefined,
         style,
       ]}
       {...rest}
@@ -76,5 +91,11 @@ const styles = StyleSheet.create({
   smallprint: {
     fontSize: 12,
     fontFamily: "Poppins_400Regular",
+  },
+  logo: {
+    fontSize: 64,
+    fontFamily: "Danfo",
+    textAlign: "center",
+    color: "#b4befe",
   },
 });
