@@ -1,70 +1,80 @@
 import { signIn, signOut, signUp } from "@/actions/auth/actions";
-import { AuthResponse, AuthTokenResponsePassword } from "@supabase/supabase-js";
-import { useRouter } from "expo-router";
-import { createContext, PropsWithChildren, useContext, useState } from "react";
+import useAsyncStorageState from "@/hooks/useAsyncStorageState";
+import { supabase } from "@/utils/supabase";
+import {
+  AuthResponse,
+  AuthTokenResponsePassword,
+  Session,
+} from "@supabase/supabase-js";
+import { createContext, PropsWithChildren, useContext, useEffect } from "react";
 
 type Context = {
-  user: string;
-  setUser: (user: string) => void;
+  session: Session | null;
+  setSession: (session: Session) => void;
   login: (
     email: string,
     password: string,
   ) => Promise<AuthTokenResponsePassword>;
-  logout: () => void;
+  signup: (email: string, password: string) => Promise<AuthResponse>;
+  logout: () => Promise<void>;
   isLogged: () => boolean;
-  signup: (
-    email: string,
-    password: string,
-  ) => Promise<AuthResponse>;
+  loading: boolean;
 };
 
 const SignupContext = createContext<Context>({} as Context);
 
 export const AuthProvider = ({ children }: PropsWithChildren) => {
-  const [user, setUser] = useState<string>("");
-  const router = useRouter();
+  const [session, setSession, loading] = useAsyncStorageState<Session | null>({
+    key: "session",
+    initialValue: null,
+  });
 
   function isLogged() {
-    return !!user;
+    return !!session;
   }
 
   async function login(email: string, password: string) {
-    const { error, data } = await signIn(email, password);
+    const { error, data }: AuthTokenResponsePassword = await signIn(
+      email,
+      password,
+    );
 
-    if (error) {
-      throw new Error(error.message);
-    }
-
-    if (data?.user?.email) {
-      setUser(data.user.email);
-    }
-
-    router.push("/");
-
-    return { error, data };
+    return { error, data } as AuthTokenResponsePassword;
   }
 
   async function signup(email: string, password: string) {
     const { error, data } = await signUp(email, password);
 
-    if (error) {
-      throw new Error(error.message);
-    }
-
-    if (data?.user?.email) {
-      setUser(data.user.email);
-    }
-
-    return { error, data };
+    return { error, data } as AuthResponse;
   }
 
   async function logout() {
     await signOut();
-    setUser("");
   }
 
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
-    <SignupContext.Provider value={{ user, setUser, login, signup, logout, isLogged }}>
+    <SignupContext.Provider
+      value={{
+        session,
+        setSession,
+        login,
+        signup,
+        logout,
+        isLogged,
+        loading,
+      }}
+    >
       {children}
     </SignupContext.Provider>
   );

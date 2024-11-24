@@ -1,69 +1,60 @@
-import { Image, Pressable, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import { HelloWave } from "@/components/HelloWave";
-import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import Screen from "@/components/Screen";
+import LoginForm from "./_components/LoginForm";
+import { useEffect } from "react";
+import { useRouter } from "expo-router";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function Page() {
-  const {user, logout} = useAuth();
+  const { session, loading } = useAuth();
+  const router = useRouter();
+
+  async function checkIfUserIsLoggedIn() {
+    if (!loading && session) {
+      router.push("/home");
+    }
+  };
+
+  useEffect(() => {
+    checkIfUserIsLoggedIn();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session]);
 
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{
-        light: "#A1CEDC",
-        dark: "#1D3D47",
+    <Screen
+      contentContainerStyle={{
+        flex: 1,
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
       }}
-      headerImage={
-        <Image
-          //eslint-disable-next-line
-          source={require("@/assets/images/partial-react-logo.png")}
-          style={styles.reactLogo}
-        />
-      }
     >
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome {user}!</ThemedText>
+        <ThemedText type="title">Welcome back!</ThemedText>
         <HelloWave />
       </ThemedView>
 
-      <ThemedView style={{ display: "flex", flexDirection: "column" }}>
-        <Pressable
-          onPress={async () => {
-            await logout();
-          }}
-        >
-          <ThemedText type="default">Logout</ThemedText>
-        </Pressable>
-      </ThemedView>
-    </ParallaxScrollView>
+      <LoginForm />
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
+  shadowContainer: {
+    boxShadow: "0px 0px 8px rgba(255, 255, 255, 0.25)",
+    width: "100%",
+    padding: 16,
+    borderRadius: 16,
+  },
   titleContainer: {
     flexDirection: "row",
     width: "100%",
+    justifyContent: "center",
     alignItems: "center",
+    marginBottom: 16,
     gap: 8,
-  },
-  formContainer: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  input: {
-    height: 40,
-    borderColor: "gray",
-    borderWidth: 1,
-    backgroundColor: "white",
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: "absolute",
   },
 });

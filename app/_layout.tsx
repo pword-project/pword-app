@@ -11,8 +11,8 @@ import { useEffect, PropsWithChildren } from "react";
 import "react-native-reanimated";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import React from "react";
-import NavigationLayout from "@/components/Navigation";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { Poppins_400Regular } from "@expo-google-fonts/poppins";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -21,6 +21,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+    Poppins_400Regular,
   });
 
   useEffect(() => {
@@ -44,7 +45,6 @@ export default function RootLayout({ children }: PropsWithChildren) {
           <Stack.Screen name="+not-found" />
         </Stack>
         {children}
-        <NavigationLayout />
         <StatusBar style="auto" />
       </AuthProvider>
     </ThemeProvider>
