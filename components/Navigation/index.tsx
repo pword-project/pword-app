@@ -8,13 +8,13 @@ export default function NavigationLayout() {
       <Link href="/">
         <ThemedText type="link">Go to Home</ThemedText>
       </Link>
-      <Link href="/login">
+      <Link href="/">
         <ThemedText type="link">Go to Login</ThemedText>
       </Link>
       <Link href="/signup">
         <ThemedText type="link">Go to Signup</ThemedText>
       </Link>
-      <Link href="/protected/explore">
+      <Link href="/explore">
         <ThemedText type="link">Go to Explore (protected)</ThemedText>
       </Link>
     </ThemedView>
