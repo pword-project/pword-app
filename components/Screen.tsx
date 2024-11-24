@@ -35,6 +35,8 @@ const getStyles = ({ top, right, left, bottom }: EdgeInsets) =>
     content: {
       width: "100%",
       flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
     },
   });
 
