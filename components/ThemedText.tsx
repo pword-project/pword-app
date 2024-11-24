@@ -96,5 +96,6 @@ const styles = StyleSheet.create({
     fontSize: 64,
     fontFamily: "Danfo",
     textAlign: "center",
+    color: "#b4befe",
   },
 });
