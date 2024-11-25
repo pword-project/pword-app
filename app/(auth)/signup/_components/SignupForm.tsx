@@ -44,7 +44,7 @@ export default function SignupForm() {
   useEffect(() => {
     return () => {
       formik.resetForm();
-    }
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -108,6 +108,7 @@ export default function SignupForm() {
           type="default"
           style={{
             textAlign: "center",
+            marginTop: 42,
           }}
         >
           Already have an account?
@@ -118,7 +119,6 @@ export default function SignupForm() {
           href="/"
           style={{
             textAlign: "center",
-            marginTop: 42,
           }}
         >
           <ThemedText type="link">Log In</ThemedText>
