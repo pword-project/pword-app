@@ -4,15 +4,14 @@ import { ThemedView } from "@/components/ThemedView";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import EmailSchema from "@/schemas/email";
-import PasswordSchema from "@/schemas/password";
-import { useAuth } from "@/contexts/AuthContext";
 import { ThemedTextInput } from "@/components/ThemedInput";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import React, { useEffect } from "react";
 import { Link, useRouter } from "expo-router";
+import { signInOtp, verifyOtp } from "@/actions/auth/actions";
+import { VerifyEmailOtpParams } from "@supabase/supabase-js";
 
-export default function LoginForm() {
-  const { login } = useAuth();
+export default function LoginWithOTP() {
   const errorColor = useThemeColor({}, "error");
   const router = useRouter();
 
@@ -26,14 +25,17 @@ export default function LoginForm() {
     },
     validationSchema: yup.object().shape({
       email: EmailSchema,
-      password: PasswordSchema,
+      password: yup.string().required("OTP is required"),
     }),
     onSubmit: async (values, formikHelpers) => {
       const { email, password } = values;
       const {
         error,
         data: { session },
-      } = await login(email, password);
+      } = await verifyOtp({
+        email,
+        token: password,
+      } as VerifyEmailOtpParams);
 
       if (error) {
         return formikHelpers.setStatus({ error: error.message });
@@ -79,17 +81,37 @@ export default function LoginForm() {
           error={formik.touched.email ? formik.errors.email : ""}
         />
 
+        <Pressable
+          onPress={async () => {
+            const { error } = await signInOtp(formik.values.email);
+
+            if (error) {
+              return formik.setStatus({ error: error.message });
+            }
+
+            Alert.alert("OTP sent to your email!");
+          }}
+        >
+          <ThemedText
+            type="button"
+            style={{
+              textAlign: "center",
+            }}
+          >
+            Send otp
+          </ThemedText>
+        </Pressable>
+
         <ThemedTextInput
           style={styles.input}
-          label="Password"
-          placeholder="password"
+          label="One time password"
+          placeholder="One time password"
           id="password"
           value={formik.values.password}
           onChangeText={formik.handleChange("password")}
           onBlur={formik.handleBlur("password")}
           autoComplete="password"
           error={formik.touched.password ? formik.errors.password : ""}
-          secureTextEntry
         />
 
         <Pressable
@@ -114,15 +136,16 @@ export default function LoginForm() {
             marginTop: 42,
           }}
         >
-          You can also{" "}
+          Already have an account?{" "}
           <Link
             target="_self"
-            href="/loginOTP"
+            href="/"
             style={{
               textAlign: "center",
+              marginLeft: 4,
             }}
           >
-            <ThemedText type="link">Log in with otp</ThemedText>
+            <ThemedText type="link">Log in</ThemedText>
           </Link>
         </ThemedText>
 
@@ -130,6 +153,7 @@ export default function LoginForm() {
           type="default"
           style={{
             textAlign: "center",
+            marginTop: 16,
           }}
         >
           Don't have an account?{" "}
@@ -151,7 +175,6 @@ export default function LoginForm() {
 const styles = StyleSheet.create({
   titleContainer: {
     flexDirection: "row",
-    width: "100%",
     justifyContent: "center",
     alignItems: "center",
     gap: 8,

@@ -21,7 +21,8 @@ export type ThemedTextProps = TextProps & {
     | "subtitle"
     | "link"
     | "smallprint"
-    | "logo";
+    | "logo"
+    | "button"
 } & PropsWithChildren;
 
 export function ThemedText({
@@ -57,6 +58,7 @@ export function ThemedText({
         type === "link" ? styles.link : undefined,
         type === "smallprint" ? styles.smallprint : undefined,
         type === "logo" ? styles.logo : undefined,
+        type === "button" ? styles.button : undefined,
         style,
       ]}
       {...rest}
@@ -86,11 +88,22 @@ const styles = StyleSheet.create({
   link: {
     fontSize: 16,
     color: "#0a7ea4",
+    textDecorationLine: "underline",
     fontFamily: "Poppins_400Regular",
   },
   smallprint: {
     fontSize: 12,
     fontFamily: "Poppins_400Regular",
+  },
+  button: {
+    fontSize: 20,
+    fontFamily: "Poppins_400Regular",
+    padding: 4,
+    borderRadius: 4,
+    backgroundColor: "#B4BEFE",
+    color: "#151718",
+    borderColor: "#fff",
+    textAlign: "center",
   },
   logo: {
     fontSize: 64,

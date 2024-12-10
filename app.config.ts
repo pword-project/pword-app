@@ -48,5 +48,8 @@ module.exports = {
   runtimeVersion: {
     policy: "appVersion",
   },
+  expo: {
+    scheme: "com.supabase",
+  },
   owner: "pword",
 };
