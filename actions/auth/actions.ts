@@ -1,4 +1,7 @@
 import { supabase } from "@/utils/supabase";
+import {
+  VerifyEmailOtpParams,
+} from "@supabase/supabase-js";
 
 export async function signIn(email: string, password: string) {
   const response = await supabase.auth.signInWithPassword({
@@ -31,4 +34,24 @@ export async function getUser() {
   } = await supabase.auth.getUser();
 
   return { user, error };
+}
+
+export async function signInOtp(email: string) {
+  const response = await supabase.auth.signInWithOtp({
+    email,
+    options: {
+      shouldCreateUser: false,
+    },
+  });
+  return response;
+}
+
+type VerifyOtp = VerifyEmailOtpParams;
+export async function verifyOtp({ token, email }: VerifyOtp) {
+  const response = await supabase.auth.verifyOtp({
+    type: "email",
+    token,
+    email,
+  });
+  return response;
 }
