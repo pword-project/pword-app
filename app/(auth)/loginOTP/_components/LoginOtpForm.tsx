@@ -1,4 +1,4 @@
-import { Alert, Pressable, StyleSheet } from "react-native";
+import { Pressable, StyleSheet } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useFormik } from "formik";
@@ -10,6 +10,7 @@ import React, { useEffect } from "react";
 import { Link, useRouter } from "expo-router";
 import { signInOtp, verifyOtp } from "@/actions/auth/actions";
 import { VerifyEmailOtpParams } from "@supabase/supabase-js";
+import { toast } from "@backpackapp-io/react-native-toast";
 
 export default function LoginWithOTP() {
   const errorColor = useThemeColor({}, "error");
@@ -42,7 +43,7 @@ export default function LoginWithOTP() {
       }
 
       if (!session)
-        Alert.alert("Please check your inbox for email verification!");
+        toast.error("Please check your inbox for email verification!");
 
       router.replace("/home");
     },
@@ -83,13 +84,17 @@ export default function LoginWithOTP() {
 
         <Pressable
           onPress={async () => {
+            if (!Boolean(formik.values.email)) {
+              return toast.error("Email is required");
+            }
+
             const { error } = await signInOtp(formik.values.email);
 
             if (error) {
-              return formik.setStatus({ error: error.message });
+              return toast.error(error.message);
             }
 
-            Alert.alert("OTP sent to your email!");
+            toast.success("OTP sent to your email!");
           }}
         >
           <ThemedText
