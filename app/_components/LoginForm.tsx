@@ -1,4 +1,4 @@
-import { Alert, Pressable, StyleSheet } from "react-native";
+import { Pressable, StyleSheet } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useFormik } from "formik";
@@ -10,6 +10,7 @@ import { ThemedTextInput } from "@/components/ThemedInput";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import React, { useEffect } from "react";
 import { Link, useRouter } from "expo-router";
+import { toast } from "@backpackapp-io/react-native-toast";
 
 export default function LoginForm() {
   const { login } = useAuth();
@@ -40,7 +41,7 @@ export default function LoginForm() {
       }
 
       if (!session)
-        Alert.alert("Please check your inbox for email verification!");
+        toast.error("Please check your inbox for email verification!");
 
       router.replace("/home");
     },
