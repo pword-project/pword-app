@@ -48,7 +48,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
             <Stack.Screen name="+not-found" />
           </Stack>
           {children}
-          <Toasts /> {/* <---- Add Here */}
+          <Toasts />
           <StatusBar style="auto" />
         </GestureHandlerRootView>
       </AuthProvider>
