@@ -2,11 +2,12 @@
 //import { createStackNavigator } from "@react-navigation/stack";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { Dimensions, FlatList, Image,View, Text, StyleSheet, TouchableOpacity, NativeSyntheticEvent, NativeScrollEvent, Pressable } from "react-native";
+import { Dimensions, FlatList, Image, Text, StyleSheet, NativeSyntheticEvent, NativeScrollEvent, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { ThemedView } from "@/components/ThemedView";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useState} from "react";
 
 const {width, height} = Dimensions.get('window');
 
@@ -54,16 +55,17 @@ const Slide: React.FC<{item: SlideItem}> = ({item}) => {
         </ThemedView>
     )
 }
-export default function onboarding(){
-    const [currentSlideIndex, SetCurrentSlideIndex] = React.useState(0)
-    const ref = React.useRef<FlatList>(null)
+export default function Onboarding(){
+    const [currentSlideIndex, SetCurrentSlideIndex] = useState(0);
+    const ref = React.useRef<FlatList>(null);
+
     const router = useRouter();
     //cambio del indice del slide actual para la barra de progreso
     const changeSlideIndex = (e: NativeSyntheticEvent<NativeScrollEvent>) =>{
         const contentOSX = e.nativeEvent.contentOffset.x;
-        const currentIndex = Math.round(contentOSX / width)
-        console.log(currentIndex)
-        SetCurrentSlideIndex(currentIndex)
+        const currentIndex = Math.round(contentOSX / width);
+        console.log(currentIndex);
+        SetCurrentSlideIndex(currentIndex);
     }
     // Cambio de slide desde el boton Next
     const nextSlide = () =>{
