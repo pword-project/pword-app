@@ -1,7 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Animated,
+} from "react-native";
 import { ThemedView } from "@/components/ThemedView";
-import { getFlashcards } from '@/actions/flashcards/action';
+import { getFlashcards } from "@/actions/flashcards/action";
 
 type FlashcardProps = {
   id: string;
@@ -18,9 +24,16 @@ type Card = {
   definition: string;
   example: string;
   user_id: string;
-}
+};
 
-const Flashcard: React.FC<FlashcardProps> = ({ id, word, definition, expanded, onToggle, onDelete }) => {
+const Flashcard: React.FC<FlashcardProps> = ({
+  id,
+  word,
+  definition,
+  expanded,
+  onToggle,
+  onDelete,
+}) => {
   const [heightAnim] = useState(new Animated.Value(expanded ? 150 : 60));
 
   useEffect(() => {
@@ -29,6 +42,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ id, word, definition, expanded, o
       duration: 300,
       useNativeDriver: false,
     }).start();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [expanded]);
 
   return (
@@ -37,15 +51,19 @@ const Flashcard: React.FC<FlashcardProps> = ({ id, word, definition, expanded, o
         <Text style={styles.word}>{word}</Text>
         {expanded && (
           <>
-            <Text style={styles.definition}>{definition}</Text>            
-            <View style={{flex:1,flexDirection:'row',alignItems:'flex-end'}}>
-                <TouchableOpacity  style={styles.regenButton}>
-                    <Text style={styles.deleteButtonText}>Regenerate</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => onDelete(id)} style={styles.deleteButton}>
-                    <Text style={styles.deleteButtonText}>Delete</Text>
-                </TouchableOpacity>
-               
+            <Text style={styles.definition}>{definition}</Text>
+            <View
+              style={{ flex: 1, flexDirection: "row", alignItems: "flex-end" }}
+            >
+              <TouchableOpacity style={styles.regenButton}>
+                <Text style={styles.deleteButtonText}>Regenerate</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => onDelete(id)}
+                style={styles.deleteButton}
+              >
+                <Text style={styles.deleteButtonText}>Delete</Text>
+              </TouchableOpacity>
             </View>
           </>
         )}
@@ -55,8 +73,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ id, word, definition, expanded, o
 };
 
 const App = () => {
-
-  const [flashcards, setFlashcards] = useState<Array<Card>>([]);
+  const [flashcards, setFlashcards] = useState<Card[]>([]);
   const [expandedCard, setExpandedCard] = useState<string | null>(null);
 
   const handleToggle = (id: string) => {
@@ -70,19 +87,18 @@ const App = () => {
     }
   };
 
-  useEffect(()=>{
-    getFlashcards().then((response)=>{
-      console.log(response)
-      setFlashcards(response.data as Array<Card>)
-    })
-  },[])
+  useEffect(() => {
+    getFlashcards().then((response) => {
+      setFlashcards(response.data as Card[]);
+    });
+  }, []);
 
-  if (!flashcards.length){
-    return <View>
-      <Text>
-        LOADING !!!!!
-      </Text>
-    </View> 
+  if (!flashcards.length) {
+    return (
+      <View>
+        <Text>LOADING !!!!!</Text>
+      </View>
+    );
   }
   return (
     <ThemedView style={styles.container}>
@@ -105,53 +121,52 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
-    alignItems: 'center',
+    alignItems: "center",
   },
   card: {
-    width: '90%',
+    width: "90%",
     marginVertical: 10,
-    backgroundColor: '#f8f8f8',
+    backgroundColor: "#f8f8f8",
     borderRadius: 8,
-    overflow: 'hidden',
+    overflow: "hidden",
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: "#ddd",
   },
   cardContent: {
     flex: 1,
     padding: 10,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   word: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   definition: {
     marginTop: 10,
     fontSize: 16,
-    color: '#555',
+    color: "#555",
   },
-  regenButton:{
+  regenButton: {
     marginTop: 10,
-    alignSelf: 'center',
-    backgroundColor: 'green',
+    alignSelf: "center",
+    backgroundColor: "green",
     paddingVertical: 5,
     paddingHorizontal: 15,
     borderRadius: 5,
-    marginLeft: 'auto',
-
+    marginLeft: "auto",
   },
   deleteButton: {
     marginTop: 10,
-    alignSelf: 'center',
-    backgroundColor: '#ff4d4d',
+    alignSelf: "center",
+    backgroundColor: "#ff4d4d",
     paddingVertical: 5,
     paddingHorizontal: 15,
     borderRadius: 5,
-    marginLeft: 'auto',
+    marginLeft: "auto",
   },
   deleteButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
+    color: "white",
+    fontWeight: "bold",
   },
 });
 
