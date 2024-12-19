@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
 import { ThemedView } from "@/components/ThemedView";
+import { getFlashcards } from '@/actions/flashcards/action';
 
 type FlashcardProps = {
   id: string;
@@ -11,38 +12,18 @@ type FlashcardProps = {
   onDelete: (id: string) => void;
 };
 
-const initialFlashcards = [
-  {
-    id: '1',
-    word: 'React',
-    definition: 'A JavaScript library for building user interfaces.',
-  },
-  {
-    id: '2',
-    word: 'JavaScript',
-    definition: 'A programming language that is commonly used for web development.',
-  },
-  {
-    id: '3',
-    word: 'Node.js',
-    definition: 'A runtime environment that allows you to run JavaScript on the server side.',
-  },
-  {
-    id: '4',
-    word: 'React Native',
-    definition: 'A framework for building native apps using React.',
-  },
-  {
-    id: '5',
-    word: 'TypeScript',
-    definition: 'A strongly typed programming language that builds on JavaScript.',
-  },
-];
+type Card = {
+  id: string;
+  word: string;
+  definition: string;
+  example: string;
+  user_id: string;
+}
 
 const Flashcard: React.FC<FlashcardProps> = ({ id, word, definition, expanded, onToggle, onDelete }) => {
   const [heightAnim] = useState(new Animated.Value(expanded ? 150 : 60));
 
-  React.useEffect(() => {
+  useEffect(() => {
     Animated.timing(heightAnim, {
       toValue: expanded ? 150 : 60,
       duration: 300,
@@ -74,7 +55,8 @@ const Flashcard: React.FC<FlashcardProps> = ({ id, word, definition, expanded, o
 };
 
 const App = () => {
-  const [flashcards, setFlashcards] = useState(initialFlashcards);
+
+  const [flashcards, setFlashcards] = useState<Array<Card>>([]);
   const [expandedCard, setExpandedCard] = useState<string | null>(null);
 
   const handleToggle = (id: string) => {
@@ -82,12 +64,26 @@ const App = () => {
   };
 
   const handleDelete = (id: string) => {
-    setFlashcards((prev) => prev.filter((card) => card.id !== id));
+    setFlashcards((prev) => prev?.filter((card) => card?.id !== id));
     if (expandedCard === id) {
       setExpandedCard(null); // Collapse the card if it was expanded
     }
   };
 
+  useEffect(()=>{
+    getFlashcards().then((response)=>{
+      console.log(response)
+      setFlashcards(response.data as Array<Card>)
+    })
+  },[])
+
+  if (!flashcards.length){
+    return <View>
+      <Text>
+        LOADING !!!!!
+      </Text>
+    </View> 
+  }
   return (
     <ThemedView style={styles.container}>
       {flashcards.map((flashcard) => (
