@@ -64,13 +64,13 @@ export default function Onboarding(){
     const changeSlideIndex = (e: NativeSyntheticEvent<NativeScrollEvent>) =>{
         const contentOSX = e.nativeEvent.contentOffset.x;
         const currentIndex = Math.round(contentOSX / width);
-        console.log(currentIndex);
+        // console.log(currentIndex);
         SetCurrentSlideIndex(currentIndex);
     }
     // Cambio de slide desde el boton Next
     const nextSlide = () =>{
         const nsIndex = currentSlideIndex + 1;
-        if(nsIndex != slides.length){
+        if(nsIndex !== slides.length){
             const offset = nsIndex * width;
             ref?.current?.scrollToOffset({offset})
             SetCurrentSlideIndex(nsIndex)
@@ -89,15 +89,11 @@ export default function Onboarding(){
         try {
             const onboardingState = true;
             await AsyncStorage.setItem('onboarding_state', JSON.stringify(onboardingState));
-            console.log(onboardingState)
+            // console.log(onboardingState)
             router.replace('/home')
         } catch (e) {
+            // eslint-disable-next-line no-console
             console.error('Error al guardar el estado del onboarding:', e);
-        }
-        try{
-            console.log(await AsyncStorage.getItem('onboarding_state'))
-        } catch(e){
-            console.error('Error al cargar el estado del onboarding:', e);
         }
         router.replace('/home')
     }
@@ -112,7 +108,7 @@ export default function Onboarding(){
                             key={index} 
                             style={[
                                 styles.indicator, 
-                                currentSlideIndex == index && {
+                                currentSlideIndex === index && {
                                     backgroundColor: 'white',
                                     width: 25,
                             },
@@ -122,7 +118,7 @@ export default function Onboarding(){
                 </ThemedView>
                 <ThemedView style={{marginBottom:20}}>
                     <ThemedView>
-                        {currentSlideIndex == slides.length -1 ? 
+                        {currentSlideIndex === slides.length -1 ? 
                             (<ThemedView style={{flexDirection: 'row'}}>
                                 <Pressable style={styles.button}>
                                     <Text style={{fontWeight:'bold', fontSize:15}} onPress={finish}>Finish</Text>
