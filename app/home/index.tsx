@@ -1,40 +1,128 @@
-import { StyleSheet, Pressable } from "react-native";
-
+import { Pressable, StyleSheet } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { ThemedView } from "@/components/ThemedView";
-import { useAuth } from "@/contexts/AuthContext";
 import withAuth from "@/hocs/withAuth";
 import Screen from "@/components/Screen";
 import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import { Flashcard } from "@/types/Flashcard";
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  deleteFlashcard,
+  getFlashcardsByUserId,
+} from "@/actions/flashcards/action";
+import FlashCard from "@/components/Flashcard";
+import { useThemeColor } from "@/hooks/useThemeColor";
 
 function Page() {
-  const { logout, session } = useAuth();
   const router = useRouter();
+  const successColor = useThemeColor({}, "success");
+  const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
+  const [loading, setLoading] = useState(false);
+  const { session } = useAuth();
+
+  async function fetchFlashcards() {
+    setLoading(true);
+    const flashcards = await getFlashcardsByUserId(
+      session?.user.id ?? "no-user-id",
+    );
+    if (flashcards.error) {
+      return;
+    }
+
+    setFlashcards(flashcards.data ?? []);
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    fetchFlashcards();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session]);
+
+  if (loading)
+    return (
+      <Screen>
+        <ThemedView>
+          <ThemedText>Loading...</ThemedText>
+        </ThemedView>
+      </Screen>
+    );
+
+  if (!flashcards.length) {
+    return (
+      <Screen>
+        <ThemedView>
+          <ThemedText>You've no flashcards!</ThemedText>
+        </ThemedView>
+      </Screen>
+    );
+  }
 
   return (
     <Screen>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">
-          Welcome to your homepage {session?.user.email}
-        </ThemedText>
+        <ThemedView
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <ThemedText type="title">Flashcards</ThemedText>
+          <Pressable
+            onPress={() => {
+              router.push("/flashcards/new");
+            }}
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              gap: 8,
+            }}
+          >
+            <ThemedText
+              type="default"
+              style={{
+                color: successColor,
+              }}
+            >
+              Add new
+            </ThemedText>
+            <FontAwesome6 name="add" size={24} color={successColor} />
+          </Pressable>
+        </ThemedView>
+
+        <ThemedView
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 16,
+          }}
+        >
+          {flashcards.map((flashcard) => {
+            // eslint-disable-next-line react/jsx-key
+            return (
+              <FlashCard
+                key={flashcard.id}
+                flashcard={flashcard}
+                handleDelete={async () => {
+                  const response = await deleteFlashcard(flashcard.id);
+                  if (response.error) {
+                    return;
+                  }
+                  setFlashcards((prev) =>
+                    prev.filter((f) => f.id !== flashcard.id),
+                  );
+                }}
+                handleEdit={() => {
+                  router.push(`/flashcards/edit/${flashcard.id}`);
+                }}
+              />
+            );
+          })}
+        </ThemedView>
       </ThemedView>
-
-
-      <Pressable
-        onPress={() => {
-          router.replace("/explore");
-        }}
-      >
-        <ThemedText type="link">Go to explore</ThemedText>
-      </Pressable>
-
-      <Pressable
-        onPress={async () => {
-          await logout();
-        }}
-      >
-        <ThemedText type="link">logout</ThemedText>
-      </Pressable>
     </Screen>
   );
 }
@@ -49,7 +137,9 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   titleContainer: {
-    flexDirection: "row",
+    flexDirection: "column",
     gap: 8,
+    width: "100%",
+    marginTop: 16,
   },
 });
