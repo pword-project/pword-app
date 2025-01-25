@@ -40,25 +40,6 @@ function Page() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
 
-  if (loading)
-    return (
-      <Screen>
-        <ThemedView>
-          <ThemedText>Loading...</ThemedText>
-        </ThemedView>
-      </Screen>
-    );
-
-  if (!flashcards.length) {
-    return (
-      <Screen>
-        <ThemedView>
-          <ThemedText>You've no flashcards!</ThemedText>
-        </ThemedView>
-      </Screen>
-    );
-  }
-
   return (
     <Screen>
       <ThemedView style={styles.titleContainer}>
@@ -92,6 +73,18 @@ function Page() {
             <FontAwesome6 name="add" size={24} color={successColor} />
           </Pressable>
         </ThemedView>
+
+        {!loading && !flashcards.length && (
+          <ThemedView>
+            <ThemedText>You've no flashcards, add some!</ThemedText>
+          </ThemedView>
+        )}
+
+        {loading && (
+          <ThemedView>
+            <ThemedText>Loading...</ThemedText>
+          </ThemedView>
+        )}
 
         <ThemedView
           style={{
