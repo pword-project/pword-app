@@ -13,7 +13,7 @@ type Props = PropsWithChildren & ScrollViewProps;
 const Screen = ({ children, style, ...rest }: Props) => {
   const { top, bottom, left, right } = useSafeAreaInsets();
   const styles = getStyles({ top, bottom, left, right });
-  const { logout } = useAuth();
+  const { logout, session } = useAuth();
   const router = useRouter();
 
   return (
@@ -38,25 +38,27 @@ const Screen = ({ children, style, ...rest }: Props) => {
           <ThemedText type="logo">Pword</ThemedText>
         </Pressable>
 
-        <Pressable
-          onPress={async () => {
-            await logout();
-          }}
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            gap: 8,
-          }}
-        >
-          <ThemedText
+        {session && (
+          <Pressable
+            onPress={async () => {
+              await logout();
+            }}
             style={{
-              color: "white",
+              display: "flex",
+              flexDirection: "row",
+              gap: 8,
             }}
           >
-            logout
-          </ThemedText>
-          <AntDesign name="logout" size={24} color="white" />
-        </Pressable>
+            <ThemedText
+              style={{
+                color: "white",
+              }}
+            >
+              logout
+            </ThemedText>
+            <AntDesign name="logout" size={24} color="white" />
+          </Pressable>
+        )}
       </ThemedView>
       <ThemedView style={styles.content}>{children}</ThemedView>
     </ThemedScrollView>
