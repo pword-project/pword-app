@@ -18,7 +18,11 @@ const FlashCard = ({ flashcard, handleDelete, handleEdit }: Props) => {
 
   return (
     <ThemedView style={styles.card}>
-      <ThemedView>
+      <ThemedView
+        style={{
+          width: "70%",
+        }}
+      >
         <ThemedText
           style={{
             color: "#b4befe",
@@ -75,6 +79,7 @@ export default FlashCard;
 const styles = StyleSheet.create({
   card: {
     display: "flex",
+    overflow: "hidden",
     width: "100%",
     padding: 16,
     borderRadius: 8,
