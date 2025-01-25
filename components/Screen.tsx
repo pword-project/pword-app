@@ -1,15 +1,20 @@
 import React, { PropsWithChildren } from "react";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import { EdgeInsets, useSafeAreaInsets } from "react-native-safe-area-context";
-import { ScrollViewProps, StyleSheet } from "react-native";
+import { Pressable, ScrollViewProps, StyleSheet } from "react-native";
 import { ThemedScrollView } from "./ThemedScrollView";
 import { ThemedText } from "./ThemedText";
 import { ThemedView } from "./ThemedView";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "expo-router";
 
 type Props = PropsWithChildren & ScrollViewProps;
 
 const Screen = ({ children, style, ...rest }: Props) => {
   const { top, bottom, left, right } = useSafeAreaInsets();
   const styles = getStyles({ top, bottom, left, right });
+  const { logout } = useAuth();
+  const router = useRouter();
 
   return (
     <ThemedScrollView
@@ -17,7 +22,42 @@ const Screen = ({ children, style, ...rest }: Props) => {
       style={[styles.screen, style]}
       {...rest}
     >
-      <ThemedText type="logo">Pword</ThemedText>
+      <ThemedView
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <Pressable
+          onPress={() => {
+            router.push("/home");
+          }}
+        >
+          <ThemedText type="logo">Pword</ThemedText>
+        </Pressable>
+
+        <Pressable
+          onPress={async () => {
+            await logout();
+          }}
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            gap: 8,
+          }}
+        >
+          <ThemedText
+            style={{
+              color: "white",
+            }}
+          >
+            logout
+          </ThemedText>
+          <AntDesign name="logout" size={24} color="white" />
+        </Pressable>
+      </ThemedView>
       <ThemedView style={styles.content}>{children}</ThemedView>
     </ThemedScrollView>
   );
@@ -36,7 +76,6 @@ const getStyles = ({ top, right, left, bottom }: EdgeInsets) =>
       width: "100%",
       flex: 1,
       justifyContent: "center",
-      alignItems: "center",
     },
   });
 
