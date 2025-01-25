@@ -91,6 +91,7 @@ export default function LoginWithOTP() {
             const { error } = await signInOtp(formik.values.email);
 
             if (error) {
+              formik.setStatus({ error: error.message });
               return toast.error(error.message);
             }
 
