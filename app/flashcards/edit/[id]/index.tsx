@@ -14,9 +14,9 @@ import { Flashcard } from "@/types/Flashcard";
 import CollectionsGrid from "@/components/CollectionsGrid";
 import { Collection } from "@/types/Collections";
 import {
+  deleteCollectionByFlashcardId,
   getCollectionByFlashcardId,
   getCollectionsByUserId,
-  linkFlashcardToCollection,
   updateFlashcardCollection,
 } from "@/actions/collections/action";
 import { toast } from "@backpackapp-io/react-native-toast";
@@ -92,9 +92,6 @@ export default function Page() {
       example: yup.string().required("Example is required"),
     }),
     onSubmit: async (values): Promise<void> => {
-      // eslint-disable-next-line no-console
-      console.log(values);
-
       const payload = {
         word: values.word,
         definition: values.definition,
@@ -105,13 +102,12 @@ export default function Page() {
       const response =
         flashcard && (await updateFlashcard(flashcard.id, payload));
 
+      if (!collection && flashcard)
+        await deleteCollectionByFlashcardId(flashcard.id);
+
       if (collection && flashcard) {
-        const { data } = await getCollectionByFlashcardId(flashcard.id);
-        if (data?.at(0)) {
-          await updateFlashcardCollection(flashcard.id, collection.id);
-        } else {
-          await linkFlashcardToCollection(flashcard.id, collection.id);
-        }
+        await updateFlashcardCollection(flashcard.id, collection.id);
+        toast.success("Flashcard updated");
       }
 
       if (response?.error) {
@@ -119,7 +115,6 @@ export default function Page() {
         return formik.setStatus({ error: response.error.message });
       }
 
-      toast.success("Flashcard created and linked to collection");
       router.push("/home");
     },
   });

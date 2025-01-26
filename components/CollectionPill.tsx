@@ -11,7 +11,7 @@ type Props = {
 };
 
 const CollectionPill = ({ collection, selected, handlePress }: Props) => {
-  const successColor = useThemeColor({}, "success");
+  const logoColor = useThemeColor({}, "primaryLogoBlue");
 
   return (
     <Pressable
@@ -26,9 +26,9 @@ const CollectionPill = ({ collection, selected, handlePress }: Props) => {
         borderRadius: 8,
         borderWidth: 2,
         marginRight: 8,
-        borderColor: successColor,
+        borderColor: logoColor,
         gap: 8,
-        backgroundColor: selected ? successColor : "transparent",
+        backgroundColor: selected ? logoColor : "transparent",
       }}
     >
       <ThemedText style={{

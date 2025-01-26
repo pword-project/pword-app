@@ -11,9 +11,12 @@ type Props = {
 
 const CollectionsGrid = ({ collections, collection, handlePress }: Props) => {
   return (
-    <ScrollView horizontal={true} style={{
-      marginBottom: 16,
-    }}>
+    <ScrollView
+      horizontal={true}
+      style={{
+        marginBottom: 16,
+      }}
+    >
       {[...collections].map((col) => {
         return (
           <CollectionPill

@@ -16,9 +16,17 @@ const FlashCard = ({ flashcard, handleDelete, handleEdit }: Props) => {
   const { word, definition, example } = flashcard;
   const successColor = useThemeColor({}, "success");
   const errorColor = useThemeColor({}, "error");
+  const logoColor = useThemeColor({}, "primaryLogoBlue");
 
   return (
-    <ThemedView style={styles.card}>
+    <ThemedView
+      style={{
+        ...styles.card,
+        borderWidth: 2,
+        borderColor: logoColor,
+        borderRadius: 16,
+      }}
+    >
       <ThemedView
         style={{
           width: "70%",
@@ -111,9 +119,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     gap: 4,
-    shadowColor: "#fff",
-    shadowOpacity: 0.1,
-    shadowRadius: 5.46,
     elevation: 9,
+    height: 120,
   },
 });
