@@ -58,9 +58,22 @@ export async function updateFlashcardCollection(
   flashcardId: string,
   collectionId: string,
 ) {
+  const { error } = await deleteCollectionByFlashcardId(flashcardId);
+  if (error) {
+    return { error };
+  }
+
+  const linkResponse = await linkFlashcardToCollection(
+    flashcardId,
+    collectionId,
+  );
+  return { error: linkResponse.error };
+}
+
+export async function deleteCollectionByFlashcardId(flashcardId: string) {
   const { error } = await supabase
     .from("flashcards_collections")
-    .upsert({ collection_id: collectionId })
+    .delete()
     .eq("flashcard_id", flashcardId);
   return { error };
 }

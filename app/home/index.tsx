@@ -172,35 +172,27 @@ function Page() {
           </ThemedView>
         )}
 
-        <ThemedView
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 16,
-          }}
-        >
-          {flashcards.map((flashcard) => {
-            // eslint-disable-next-line react/jsx-key
-            return (
-              <FlashCard
-                key={flashcard.id}
-                flashcard={flashcard}
-                handleDelete={async () => {
-                  const response = await deleteFlashcard(flashcard.id);
-                  if (response.error) {
-                    return;
-                  }
-                  setFlashcards((prev) =>
-                    prev.filter((f) => f.id !== flashcard.id),
-                  );
-                }}
-                handleEdit={() => {
-                  router.push(`/flashcards/edit/${flashcard.id}`);
-                }}
-              />
-            );
-          })}
-        </ThemedView>
+        {flashcards.map((flashcard) => {
+          // eslint-disable-next-line react/jsx-key
+          return (
+            <FlashCard
+              key={flashcard.id}
+              flashcard={flashcard}
+              handleDelete={async () => {
+                const response = await deleteFlashcard(flashcard.id);
+                if (response.error) {
+                  return;
+                }
+                setFlashcards((prev) =>
+                  prev.filter((f) => f.id !== flashcard.id),
+                );
+              }}
+              handleEdit={() => {
+                router.push(`/flashcards/edit/${flashcard.id}`);
+              }}
+            />
+          );
+        })}
       </ThemedView>
     </Screen>
   );

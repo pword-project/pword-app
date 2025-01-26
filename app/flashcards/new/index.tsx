@@ -56,8 +56,6 @@ export default function Page() {
       example: yup.string().optional(),
     }),
     onSubmit: async (values): Promise<void> => {
-      // eslint-disable-next-line no-console
-      console.log(values);
       const response = await createFlashcard({
         word: values.word,
         definition: values.definition,
