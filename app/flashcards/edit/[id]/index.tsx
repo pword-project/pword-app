@@ -8,12 +8,18 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 import React, { useEffect, useState } from "react";
 import Screen from "@/components/Screen";
 import { useAuth } from "@/contexts/AuthContext";
-import {
-  getFlashcardById,
-  updateFlashcard,
-} from "@/actions/flashcards/action";
+import { getFlashcardById, updateFlashcard } from "@/actions/flashcards/action";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Flashcard } from "@/types/Flashcard";
+import CollectionsGrid from "@/components/CollectionsGrid";
+import { Collection } from "@/types/Collections";
+import {
+  getCollectionByFlashcardId,
+  getCollectionsByUserId,
+  linkFlashcardToCollection,
+  updateFlashcardCollection,
+} from "@/actions/collections/action";
+import { toast } from "@backpackapp-io/react-native-toast";
 
 export default function Page() {
   const errorColor = useThemeColor({}, "error");
@@ -22,22 +28,52 @@ export default function Page() {
   const { id } = useLocalSearchParams();
   const [flashcard, setFlashcard] = useState<Flashcard>();
   const [loading, setLoading] = useState(false);
+  const [collections, setCollections] = useState<Collection[]>([]);
+  const [collection, setCollection] = useState<Collection | null>(null);
+
+  async function fetchCollections() {
+    setLoading(true);
+
+    let cardId = typeof id === "string" ? id : id[0];
+    const { data, error } = session
+      ? await getCollectionsByUserId(session?.user.id)
+      : {};
+
+    if (error) {
+      return;
+    }
+
+    setCollections(data ?? []);
+
+    const { data: flashcardCollection } =
+      await getCollectionByFlashcardId(cardId);
+    setCollection(
+      data?.find(
+        (col) => col.id === flashcardCollection?.at(0)?.collection_id,
+      ) ?? null,
+    );
+
+    setLoading(false);
+  }
 
   const fetchFlashcard = async () => {
     let cardId = typeof id === "string" ? id : id[0];
 
     setLoading(true);
     const response = await getFlashcardById(cardId);
+
     if (response.error) {
       return router.push("/home");
     }
 
     setFlashcard(response.data);
+
     formik.setValues({
       word: response.data.word,
       definition: response.data.definition,
       example: response.data.example,
     });
+
     setLoading(false);
   };
 
@@ -69,10 +105,21 @@ export default function Page() {
       const response =
         flashcard && (await updateFlashcard(flashcard.id, payload));
 
+      if (collection && flashcard) {
+        const { data } = await getCollectionByFlashcardId(flashcard.id);
+        if (data?.at(0)) {
+          await updateFlashcardCollection(flashcard.id, collection.id);
+        } else {
+          await linkFlashcardToCollection(flashcard.id, collection.id);
+        }
+      }
+
       if (response?.error) {
+        toast.error(response.error.message);
         return formik.setStatus({ error: response.error.message });
       }
 
+      toast.success("Flashcard created and linked to collection");
       router.push("/home");
     },
   });
@@ -85,11 +132,12 @@ export default function Page() {
   }, []);
 
   useEffect(() => {
-    if (id) {
+    if (session) {
+      fetchCollections();
       fetchFlashcard();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  }, [session]);
 
   if (loading) {
     return (
@@ -163,6 +211,17 @@ export default function Page() {
           error={formik.touched.example ? formik.errors.example : ""}
           multiline
           numberOfLines={4}
+        />
+
+        <ThemedText>Collection (Optional)</ThemedText>
+
+        <CollectionsGrid
+          collection={collection}
+          collections={collections}
+          handlePress={(col) => {
+            const newCollection = collection?.id === col.id ? null : col;
+            setCollection(newCollection);
+          }}
         />
 
         <Pressable

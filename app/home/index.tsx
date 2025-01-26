@@ -10,23 +10,31 @@ import { Flashcard } from "@/types/Flashcard";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   deleteFlashcard,
+  getFlashcardsByCollectionId,
   getFlashcardsByUserId,
 } from "@/actions/flashcards/action";
 import FlashCard from "@/components/Flashcard";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import { Collection } from "@/types/Collections";
+import { getCollectionsByUserId } from "@/actions/collections/action";
+import CollectionsGrid from "@/components/CollectionsGrid";
 
 function Page() {
   const router = useRouter();
-  const successColor = useThemeColor({}, "success");
-  const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
-  const [loading, setLoading] = useState(false);
   const { session } = useAuth();
+  const logoColor = useThemeColor({}, "primaryLogoBlue");
+
+  const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
+  const [collections, setCollections] = useState<Collection[]>([]);
+  const [collection, setCollection] = useState<Collection | null>(null);
+  const [loading, setLoading] = useState(false);
 
   async function fetchFlashcards() {
     setLoading(true);
     const flashcards = await getFlashcardsByUserId(
       session?.user.id ?? "no-user-id",
     );
+
     if (flashcards.error) {
       return;
     }
@@ -35,10 +43,43 @@ function Page() {
     setLoading(false);
   }
 
+  async function fetchCollections() {
+    setLoading(true);
+    const { data, error } = await getCollectionsByUserId(
+      session?.user.id ?? "no-user-id",
+    );
+
+    if (error) {
+      return;
+    }
+
+    setCollections(data ?? []);
+    setLoading(false);
+  }
+
+  async function fetchFlashcardsByCollectionId(collectionId: string) {
+    setLoading(true);
+    const { data: flashcards, error } =
+      await getFlashcardsByCollectionId(collectionId);
+
+    if (error) {
+      return;
+    }
+
+    setFlashcards(flashcards ?? []);
+    setLoading(false);
+  }
+
   useEffect(() => {
-    fetchFlashcards();
+    fetchCollections();
+
+    if (collection) {
+      fetchFlashcardsByCollectionId(collection.id);
+    } else {
+      fetchFlashcards();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session]);
+  }, [session, collection]);
 
   return (
     <Screen>
@@ -47,8 +88,9 @@ function Page() {
           style={{
             display: "flex",
             flexDirection: "row",
-            justifyContent: "space-between",
             alignItems: "center",
+            justifyContent: "space-between",
+            gap: 16,
           }}
         >
           <ThemedText type="title">Flashcards</ThemedText>
@@ -59,20 +101,64 @@ function Page() {
             style={{
               display: "flex",
               flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
               gap: 8,
             }}
           >
             <ThemedText
               type="default"
               style={{
-                color: successColor,
+                color: logoColor,
               }}
             >
               Add new
             </ThemedText>
-            <FontAwesome6 name="add" size={24} color={successColor} />
+            <FontAwesome6 name="add" size={24} color={logoColor} />
           </Pressable>
         </ThemedView>
+
+        <ThemedView
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 16,
+          }}
+        >
+          <Pressable
+            onPress={() => {
+              router.push("/collections/new");
+            }}
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              marginLeft: "auto",
+              gap: 8,
+            }}
+          >
+            <ThemedText
+              type="smallprint"
+              style={{
+                color: logoColor,
+              }}
+            >
+              Manage collections
+            </ThemedText>
+            <FontAwesome6 name="contact-book" size={12} color={logoColor} />
+          </Pressable>
+        </ThemedView>
+
+        <CollectionsGrid
+          collection={collection}
+          collections={collections}
+          handlePress={(col) => {
+            const newCollection = collection?.id === col.id ? null : col;
+            setCollection(newCollection);
+          }}
+        />
 
         {!loading && !flashcards.length && (
           <ThemedView>
