@@ -7,6 +7,7 @@ import { ThemedText } from "./ThemedText";
 import { ThemedView } from "./ThemedView";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "expo-router";
+import { useThemeColor } from "@/hooks/useThemeColor";
 
 type Props = PropsWithChildren & ScrollViewProps;
 
@@ -15,6 +16,7 @@ const Screen = ({ children, style, ...rest }: Props) => {
   const styles = getStyles({ top, bottom, left, right });
   const { logout, session } = useAuth();
   const router = useRouter();
+  const errorColor = useThemeColor({}, "error");
 
   return (
     <ThemedScrollView
@@ -51,12 +53,12 @@ const Screen = ({ children, style, ...rest }: Props) => {
           >
             <ThemedText
               style={{
-                color: "white",
+                color: errorColor,
               }}
             >
               logout
             </ThemedText>
-            <AntDesign name="logout" size={24} color="white" />
+            <AntDesign name="logout" size={24} color={errorColor} />
           </Pressable>
         )}
       </ThemedView>

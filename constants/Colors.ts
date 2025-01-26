@@ -6,8 +6,13 @@
 const tintColorLight = "#fff";
 const tintColorDark = "#fff";
 
+const Shared = {
+  primaryLogoBlue: "#b4befe",
+};
+
 export const Colors = {
   light: {
+    ...Shared,
     text: "#ECEDEE",
     placeholder: "#9BA1A6",
     background: "#151718",
@@ -19,6 +24,7 @@ export const Colors = {
     tabIconSelected: tintColorLight,
   },
   dark: {
+    ...Shared,
     text: "#ECEDEE",
     placeholder: "#9BA1A6",
     background: "#151718",

@@ -1,4 +1,5 @@
 import { supabase } from "@/utils/supabase";
+import { PostgrestError } from "@supabase/supabase-js";
 
 type Flashcard = {
   id: string;
@@ -31,7 +32,7 @@ export const getFlashcardById = async (id: string) => {
     .select("*")
     .eq("id", id);
   return { data: data?.[0], error };
-}
+};
 
 export const getFlashcardsByUserId = async (userId: string) => {
   const { data, error } = await supabase
@@ -39,6 +40,35 @@ export const getFlashcardsByUserId = async (userId: string) => {
     .select("*")
     .eq("user_id", userId);
   return { data, error };
+};
+
+export const getFlashcardsByCollectionId = async (
+  collectionId: string,
+): Promise<{
+  data: Flashcard[] | null;
+  error: PostgrestError | null;
+}> => {
+  const { data, error } = await supabase
+    .from("flashcards_collections")
+    .select("flashcard_id")
+    .eq("collection_id", collectionId);
+
+  if (error) {
+    return { data: null, error };
+  }
+
+  const flashcardIds = data?.map((item) => item.flashcard_id);
+
+  if (!flashcardIds) {
+    return { data: null, error: null };
+  }
+
+  const { data: flashcards, error: flashcardsError } = await supabase
+    .from("flashcards")
+    .select("*")
+    .in("id", flashcardIds);
+
+  return { data: flashcards, error: flashcardsError };
 };
 
 // Update
