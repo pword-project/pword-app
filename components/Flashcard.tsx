@@ -4,6 +4,7 @@ import { Flashcard } from "@/types/Flashcard";
 import { ThemedText } from "./ThemedText";
 import { Pressable, StyleSheet } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 type Props = {
   flashcard: Flashcard;
@@ -42,12 +43,27 @@ const FlashCard = ({ flashcard, handleDelete, handleEdit }: Props) => {
         </ThemedText>
       </ThemedView>
 
-      <ThemedView>
+      <ThemedView
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-around",
+          height: "100%",
+          gap: 4,
+        }}
+      >
         <Pressable
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            gap: 8,
+            alignItems: "center",
+          }}
           onPress={() => {
             handleEdit();
           }}
         >
+          <FontAwesome6 name="edit" size={16} color={successColor} />
           <ThemedText
             style={{
               color: successColor,
@@ -56,11 +72,19 @@ const FlashCard = ({ flashcard, handleDelete, handleEdit }: Props) => {
             Edit
           </ThemedText>
         </Pressable>
+
         <Pressable
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            gap: 8,
+            alignItems: "center",
+          }}
           onPress={() => {
             handleDelete();
           }}
         >
+          <FontAwesome6 name="trash-can" size={16} color={errorColor} />
           <ThemedText
             style={{
               color: errorColor,
