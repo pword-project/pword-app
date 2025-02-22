@@ -10,6 +10,8 @@ type Props = {
 };
 
 const CollectionsGrid = ({ collections, collection, handlePress }: Props) => {
+  if (!collections || collections.length === 0) return null;
+
   return (
     <ScrollView
       horizontal={true}
