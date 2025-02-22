@@ -1,99 +1,54 @@
-import { Pressable, StyleSheet } from "react-native";
+import CollectionsGrid from "@/components/CollectionsGrid";
+import FlashCard from "@/components/Flashcard";
+import Screen from "@/components/Screen";
 import { ThemedText } from "@/components/ThemedText";
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { ThemedView } from "@/components/ThemedView";
 import withAuth from "@/hocs/withAuth";
-import Screen from "@/components/Screen";
-import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
-import { Flashcard } from "@/types/Flashcard";
-import { useAuth } from "@/contexts/AuthContext";
-import {
-  deleteFlashcard,
-  getFlashcardsByCollectionId,
-  getFlashcardsByUserId,
-} from "@/actions/flashcards/action";
-import FlashCard from "@/components/Flashcard";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import { Collection } from "@/types/Collections";
-import { getCollectionsByUserId } from "@/actions/collections/action";
-import CollectionsGrid from "@/components/CollectionsGrid";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import { useRouter } from "expo-router";
+import { Pressable, StyleSheet } from "react-native";
+import CardsSlider from "./_components/CardsSlider";
+import { useFlashcards } from "@/contexts/FlashcardsContext";
 
 function Page() {
   const router = useRouter();
-  const { session } = useAuth();
   const logoColor = useThemeColor({}, "primaryLogoBlue");
 
-  const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
-  const [collections, setCollections] = useState<Collection[]>([]);
-  const [collection, setCollection] = useState<Collection | null>(null);
-  const [loading, setLoading] = useState(false);
+  const {
+    collection,
+    setCollection,
+    collections,
+    flashcards,
+    deleteFlashcard,
+    loading,
+  } = useFlashcards();
 
-  async function fetchFlashcards() {
-    setLoading(true);
-    const flashcards = await getFlashcardsByUserId(
-      session?.user.id ?? "no-user-id",
+  if (loading)
+    return (
+      <Screen>
+        <ThemedView style={styles.titleContainer}>
+          <ThemedText type="title">Loading...</ThemedText>
+        </ThemedView>
+      </Screen>
     );
-
-    if (flashcards.error) {
-      return;
-    }
-
-    setFlashcards(flashcards.data ?? []);
-    setLoading(false);
-  }
-
-  async function fetchCollections() {
-    setLoading(true);
-    const { data, error } = await getCollectionsByUserId(
-      session?.user.id ?? "no-user-id",
-    );
-
-    if (error) {
-      return;
-    }
-
-    setCollections(data ?? []);
-    setLoading(false);
-  }
-
-  async function fetchFlashcardsByCollectionId(collectionId: string) {
-    setLoading(true);
-    const { data: flashcards, error } =
-      await getFlashcardsByCollectionId(collectionId);
-
-    if (error) {
-      return;
-    }
-
-    setFlashcards(flashcards ?? []);
-    setLoading(false);
-  }
-
-  useEffect(() => {
-    fetchCollections();
-
-    if (collection) {
-      fetchFlashcardsByCollectionId(collection.id);
-    } else {
-      fetchFlashcards();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session, collection]);
 
   return (
     <Screen>
       <ThemedView style={styles.titleContainer}>
+        <CardsSlider />
+
         <ThemedView
           style={{
             display: "flex",
             flexDirection: "row",
-            alignItems: "center",
+            alignItems: "baseline",
             justifyContent: "space-between",
             gap: 16,
+            marginBottom: 16,
           }}
         >
-          <ThemedText type="title">Flashcards</ThemedText>
+          <ThemedText type="title">Your flashcards</ThemedText>
           <Pressable
             onPress={() => {
               router.push("/flashcards/new");
@@ -118,12 +73,22 @@ function Page() {
           </Pressable>
         </ThemedView>
 
+        <CollectionsGrid
+          collection={collection}
+          collections={collections}
+          handlePress={(col) => {
+            const newCollection = collection?.id === col.id ? null : col;
+            setCollection(newCollection);
+          }}
+        />
+
         <ThemedView
           style={{
             display: "flex",
             flexDirection: "row",
             alignItems: "center",
             gap: 16,
+            marginBottom: 16,
           }}
         >
           <Pressable
@@ -135,7 +100,6 @@ function Page() {
               flexDirection: "row",
               justifyContent: "center",
               alignItems: "center",
-              marginLeft: "auto",
               gap: 8,
             }}
           >
@@ -151,16 +115,7 @@ function Page() {
           </Pressable>
         </ThemedView>
 
-        <CollectionsGrid
-          collection={collection}
-          collections={collections}
-          handlePress={(col) => {
-            const newCollection = collection?.id === col.id ? null : col;
-            setCollection(newCollection);
-          }}
-        />
-
-        {!loading && !flashcards.length && (
+        {!loading && !flashcards?.length && (
           <ThemedView>
             <ThemedText>You've no flashcards, add some!</ThemedText>
           </ThemedView>
@@ -172,21 +127,13 @@ function Page() {
           </ThemedView>
         )}
 
-        {flashcards.map((flashcard) => {
+        {flashcards?.map((flashcard) => {
           // eslint-disable-next-line react/jsx-key
           return (
             <FlashCard
               key={flashcard.id}
               flashcard={flashcard}
-              handleDelete={async () => {
-                const response = await deleteFlashcard(flashcard.id);
-                if (response.error) {
-                  return;
-                }
-                setFlashcards((prev) =>
-                  prev.filter((f) => f.id !== flashcard.id),
-                );
-              }}
+              handleDelete={() => deleteFlashcard(flashcard)}
               handleEdit={() => {
                 router.push(`/flashcards/edit/${flashcard.id}`);
               }}

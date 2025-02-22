@@ -6,37 +6,18 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import { ThemedTextInput } from "@/components/ThemedInput";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Screen from "@/components/Screen";
 import { useAuth } from "@/contexts/AuthContext";
-import {
-  createCollection,
-  deleteCollection,
-  getCollectionsByUserId,
-} from "@/actions/collections/action";
-import { Collection } from "@/types/Collections";
 import { toast } from "@backpackapp-io/react-native-toast";
+import { useFlashcards } from "@/contexts/FlashcardsContext";
 
 export default function Page() {
   const errorColor = useThemeColor({}, "error");
   const { session } = useAuth();
 
-  const [collections, setCollections] = useState<Collection[]>([]);
-  const [loading, setLoading] = useState(false);
-
-  async function fetchCollections() {
-    setLoading(true);
-    const { data, error } = await getCollectionsByUserId(
-      session?.user.id ?? "no-user-id",
-    );
-
-    if (error) {
-      return;
-    }
-
-    setCollections(data ?? []);
-    setLoading(false);
-  }
+  const { collections, createCollection, loading, deleteCollection } =
+    useFlashcards();
 
   const formik = useFormik({
     initialValues: {
@@ -49,17 +30,15 @@ export default function Page() {
       name: yup.string().required("Name is required"),
     }),
     onSubmit: async (values): Promise<void> => {
-      const { data, error } = await createCollection({
+      const { error } = await createCollection({
         name: values.name,
         user_id: session?.user.id ?? "no-user-id",
       });
 
       if (error) {
-        return formik.setStatus({ error: error.message });
-      }
-
-      if (data && data.length > 0) {
-        setCollections((prev) => [...prev, ...data]);
+        return formik.setStatus({
+          error: "The collection could not be created. Please try again later.",
+        });
       }
 
       toast.success("Collection created");
@@ -72,11 +51,6 @@ export default function Page() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    fetchCollections();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session]);
 
   return (
     <Screen>
@@ -144,10 +118,7 @@ export default function Page() {
               <Pressable
                 key={collection.id}
                 onPress={async () => {
-                  await deleteCollection(collection.id);
-                  setCollections((prev) =>
-                    prev.filter((c) => c.id !== collection.id),
-                  );
+                  await deleteCollection(collection);
                 }}
                 style={{
                   display: "flex",

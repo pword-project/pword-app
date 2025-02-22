@@ -7,39 +7,19 @@ import { ThemedTextInput } from "@/components/ThemedInput";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import React, { useEffect, useState } from "react";
 import Screen from "@/components/Screen";
-import { useAuth } from "@/contexts/AuthContext";
-import { createFlashcard } from "@/actions/flashcards/action";
 import { useRouter } from "expo-router";
 import CollectionsGrid from "@/components/CollectionsGrid";
-import { Collection } from "@/types/Collections";
-import {
-  getCollectionsByUserId,
-  linkFlashcardToCollection,
-} from "@/actions/collections/action";
 import { toast } from "@backpackapp-io/react-native-toast";
+import { useFlashcards } from "@/contexts/FlashcardsContext";
+import { Collection } from "@/types/Collections";
 
 export default function Page() {
   const errorColor = useThemeColor({}, "error");
-  const { session } = useAuth();
   const router = useRouter();
 
-  const [collections, setCollections] = useState<Collection[]>([]);
+  const { collections, loading, createFlashcard } = useFlashcards();
+
   const [collection, setCollection] = useState<Collection | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  async function fetchCollections() {
-    setLoading(true);
-    const { data, error } = await getCollectionsByUserId(
-      session?.user.id ?? "no-user-id",
-    );
-
-    if (error) {
-      return;
-    }
-
-    setCollections(data ?? []);
-    setLoading(false);
-  }
 
   const formik = useFormik({
     initialValues: {
@@ -56,20 +36,12 @@ export default function Page() {
       example: yup.string().optional(),
     }),
     onSubmit: async (values): Promise<void> => {
-      const response = await createFlashcard({
-        word: values.word,
-        definition: values.definition,
-        example: values.example,
-        user_id: session?.user.id ?? "no-user-id",
-      });
+      const { error } = await createFlashcard(values, collection);
 
-      if (response.error) {
-        return formik.setStatus({ error: response.error.message });
-      }
-
-      if (collection) {
-        // eslint-disable-next-line no-console
-        await linkFlashcardToCollection(response.data[0].id, collection.id);
+      if (error) {
+        return formik.setStatus({
+          error: "The flashcard could not be created.",
+        });
       }
 
       toast.success("Flashcard created and linked to collection");
@@ -83,11 +55,6 @@ export default function Page() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    fetchCollections();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session]);
 
   return (
     <Screen>

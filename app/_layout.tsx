@@ -15,6 +15,7 @@ import React from "react";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { Poppins_400Regular } from "@expo-google-fonts/poppins";
 import { Toasts } from "@backpackapp-io/react-native-toast";
+import { FlashCardsProvider } from "@/contexts/FlashcardsContext";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -39,18 +40,20 @@ export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <AuthProvider>
-        <GestureHandlerRootView>
-          <Stack
-            screenOptions={{
-              headerShown: false,
-            }}
-          >
-            <Stack.Screen name="+not-found" />
-          </Stack>
-          {children}
-          <Toasts />
-          <StatusBar style="auto" />
-        </GestureHandlerRootView>
+        <FlashCardsProvider>
+          <GestureHandlerRootView>
+            <Stack
+              screenOptions={{
+                headerShown: false,
+              }}
+            >
+              <Stack.Screen name="+not-found" />
+            </Stack>
+            {children}
+            <Toasts />
+            <StatusBar style="auto" />
+          </GestureHandlerRootView>
+        </FlashCardsProvider>
       </AuthProvider>
     </ThemeProvider>
   );
