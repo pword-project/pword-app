@@ -1,13 +1,14 @@
 import React, { PropsWithChildren } from "react";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { EdgeInsets, useSafeAreaInsets } from "react-native-safe-area-context";
-import { Pressable, ScrollViewProps, StyleSheet } from "react-native";
+import { Pressable, ScrollViewProps, StyleSheet, View } from "react-native";
 import { ThemedScrollView } from "./ThemedScrollView";
 import { ThemedText } from "./ThemedText";
 import { ThemedView } from "./ThemedView";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "expo-router";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import { ChatBubbleLeftIcon } from "react-native-heroicons/outline";
 
 type Props = PropsWithChildren & ScrollViewProps;
 
@@ -17,6 +18,7 @@ const Screen = ({ children, style, ...rest }: Props) => {
   const { logout, session } = useAuth();
   const router = useRouter();
   const errorColor = useThemeColor({}, "error");
+  const logoColor = useThemeColor({}, "primaryLogoBlue");
 
   return (
     <ThemedScrollView
@@ -41,25 +43,51 @@ const Screen = ({ children, style, ...rest }: Props) => {
         </Pressable>
 
         {session && (
-          <Pressable
-            onPress={async () => {
-              await logout();
-            }}
+          <View
             style={{
               display: "flex",
               flexDirection: "row",
-              gap: 8,
+              gap: 16,
             }}
           >
-            <ThemedText
+            <Pressable
+              onPress={() => {
+                router.push("/practice");
+              }}
               style={{
-                color: errorColor,
+                display: "flex",
+                flexDirection: "row",
+                gap: 8,
               }}
             >
-              logout
-            </ThemedText>
-            <AntDesign name="logout" size={24} color={errorColor} />
-          </Pressable>
+              <AntDesign name="book" size={24} color={logoColor} />
+            </Pressable>
+
+            <Pressable
+              onPress={() => {
+                router.push("/ai");
+              }}
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                gap: 8,
+              }}
+            >
+              <ChatBubbleLeftIcon size={24} color="#fff" />
+            </Pressable>
+            <Pressable
+              onPress={async () => {
+                await logout();
+              }}
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                gap: 8,
+              }}
+            >
+              <AntDesign name="logout" size={24} color={errorColor} />
+            </Pressable>
+          </View>
         )}
       </ThemedView>
       <ThemedView style={styles.content}>{children}</ThemedView>
