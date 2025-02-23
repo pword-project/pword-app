@@ -15,7 +15,7 @@ export default function PracticeScreen() {
   }, []);
   return (
     <Screen>
-      <ThemedText type="title">Learn by Practice</ThemedText>
+      <ThemedText type="title">Learn through Practice</ThemedText>
 
       <InfoCard
         title="Translate"
