@@ -51,13 +51,6 @@ const Screen = ({ children, style, ...rest }: Props) => {
               gap: 8,
             }}
           >
-            <ThemedText
-              style={{
-                color: errorColor,
-              }}
-            >
-              logout
-            </ThemedText>
             <AntDesign name="logout" size={24} color={errorColor} />
           </Pressable>
         )}

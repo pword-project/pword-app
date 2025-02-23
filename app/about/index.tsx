@@ -27,7 +27,7 @@ export default function AboutPage() {
         <ThemedText type="title" style={styles.subtitle}>
           Meet the Creators
         </ThemedText>
-        <ScrollView style={styles.creatorsContainer} horizontal>
+        <ScrollView style={styles.creatorsContainer}>
           <View style={styles.creatorCard}>
             <ThemedText style={styles.creatorName}>Carlos Jimenez</ThemedText>
             <ThemedText style={styles.creatorEmail}>
@@ -41,15 +41,15 @@ export default function AboutPage() {
             </ThemedText>
           </View>
           <View style={styles.creatorCard}>
-            <ThemedText style={styles.creatorName}>Creator 3</ThemedText>
+            <ThemedText style={styles.creatorName}>Sergio Lopez</ThemedText>
             <ThemedText style={styles.creatorEmail}>
-              creator3@example.com
+              slopezpa@unal.edu.co
             </ThemedText>
           </View>
           <View style={styles.creatorCard}>
-            <ThemedText style={styles.creatorName}>Creator 4</ThemedText>
+            <ThemedText style={styles.creatorName}>Santiago Gomez</ThemedText>
             <ThemedText style={styles.creatorEmail}>
-              creator4@example.com
+              sjgomezg@unal.edu.co
             </ThemedText>
           </View>
         </ScrollView>

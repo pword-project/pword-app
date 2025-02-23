@@ -55,6 +55,22 @@ export default function CardsSlider() {
       />
 
       <InfoCard
+        title="AI"
+        paragraph="AI-powered training! Click the button below to start your training and improve your skills."
+        buttonText="Go to chat"
+        onPress={() => {
+          router.push("/ai");
+        }}
+        customStyles={{
+          ...infoCardStyles,
+          container: {
+            ...infoCardStyles.container,
+            maxWidth: Dimensions.get("window").width * 0.8,
+          },
+        }}
+      />
+
+      <InfoCard
         title="About"
         paragraph="Learn more about our app and its features."
         buttonText="Learn more"
