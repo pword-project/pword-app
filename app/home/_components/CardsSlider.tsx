@@ -45,8 +45,8 @@ export default function CardsSlider() {
         />
 
         <InfoCard
-          title="AI"
-          paragraph="AI-powered training! Click the button below to start your training and improve your skills."
+          title="AI Chat"
+          paragraph="AI-powered chat! Ask questions and receive personalized responses."
           buttonText="Go to chat"
           onPress={() => {
             router.push("/ai");
