@@ -97,7 +97,7 @@ export default function Page() {
 
         <ThemedTextInput
           style={styles.input}
-          label="Example (optional)"
+          label="Example"
           placeholder="example"
           id="example"
           value={formik.values.example}
@@ -108,7 +108,7 @@ export default function Page() {
           numberOfLines={4}
         />
 
-        <ThemedText>Collection (Optional)</ThemedText>
+        <ThemedText>Collection</ThemedText>
 
         <CollectionsGrid
           collection={collection}
