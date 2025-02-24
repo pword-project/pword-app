@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet } from "react-native";
+import { Platform, Pressable, StyleSheet } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useFormik } from "formik";
@@ -119,14 +119,37 @@ export default function Page() {
           }}
         />
 
+        <ThemedView>
+          <ThemedText
+            type="smallprint"
+            style={{
+              color: "#666666",
+              fontSize: 12,
+              lineHeight: 18,
+              marginBottom: 16,
+            }}
+          >
+            Note: We use advanced artificial intelligence algorithms to generate
+            a detailed and accurate description for your flashcard. This helps
+            ensure that the information is both comprehensive and easy to
+            understand, enhancing your learning experience. Our AI continuously
+            improves to provide you with the best possible content.
+          </ThemedText>
+        </ThemedView>
+
         <Pressable
           onPress={() => {
+            if (Platform.OS === "web") {
+              alert("Creating flashcard...");
+            } else {
+              toast("Creating flashcard...");
+            }
             formik.handleSubmit();
           }}
           disabled={loading}
         >
           <ThemedText
-            type="subtitle"
+            type="button"
             style={{
               textAlign: "center",
             }}
