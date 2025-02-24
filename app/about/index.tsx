@@ -99,6 +99,14 @@ export default function AboutPage() {
           you to practice conversations with an intelligent virtual assistant,
           providing instant feedback and personalized guidance.
         </ThemedText>
+        <ThemedText style={styles.paragraph}>
+          One of our latest innovations is the AI-generated flashcard
+          descriptions. These descriptions are automatically created to provide
+          you with more context and understanding of the vocabulary. We are
+          constantly striving to leverage AI to improve our platform, ensuring
+          that you have the best tools available for your language learning
+          journey.
+        </ThemedText>
 
         <ThemedText type="title" style={styles.title}>
           Legal

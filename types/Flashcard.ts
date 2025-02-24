@@ -4,4 +4,5 @@ export type Flashcard = {
   definition: string;
   example: string;
   user_id: string;
+  ai_definition?: string;
 };

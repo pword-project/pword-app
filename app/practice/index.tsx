@@ -2,10 +2,11 @@ import Screen from "@/components/Screen";
 import { ThemedText } from "@/components/ThemedText";
 import InfoCard from "@/components/ui/InfoCard";
 import { useFlashcards } from "@/contexts/FlashcardsContext";
+import withAuth from "@/hocs/withAuth";
 import { useRouter } from "expo-router";
 import { useEffect } from "react";
 
-export default function PracticeScreen() {
+function PracticeScreen() {
   const { setCollection } = useFlashcards();
   const router = useRouter();
 
@@ -28,11 +29,12 @@ export default function PracticeScreen() {
 
       <InfoCard
         title="Multiple Choice"
-        paragraph="Select the correct translation from a list of options. This method helps you quickly recognize the correct answer and reinforces your ability to distinguish between similar words."
+        paragraph="Choose the correct option out of four based on the AI-generated description. This exercise will help you improve your ability to quickly identify the correct translation by analyzing the given description. It encourages critical thinking and reinforces your understanding of the vocabulary.Select the correct translation from a list of options. This method helps you quickly recognize the correct answer and reinforces your ability to distinguish between similar words."
         buttonText="Start"
         onPress={() => {
-          router.push("/practice/multiple-choice");
+          router.push("/practice/multichoice");
         }}
+        hasAi
       />
 
       <InfoCard
@@ -55,3 +57,5 @@ export default function PracticeScreen() {
     </Screen>
   );
 }
+
+export default withAuth(PracticeScreen);

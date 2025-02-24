@@ -7,6 +7,7 @@ import {
 import {
   createFlashcard as createFlashcardAction,
   deleteFlashcard as deleteFlashcardAction,
+  getAiDefinition,
   getFlashcardsByCollectionId,
   getFlashcardsByUserId,
 } from "@/actions/flashcards/action";
@@ -20,6 +21,7 @@ import {
   useState,
 } from "react";
 import { useAuth } from "../AuthContext";
+import { AiDefinitionApiResponse } from "@/types/AiDefinitionApiResponse";
 
 type Context = {
   flashcards: Flashcard[];
@@ -109,11 +111,19 @@ export const FlashCardsProvider = ({ children }: PropsWithChildren) => {
     if (!values.word || !values.definition || !values.example)
       return { error: true };
 
+    let aiDefinition: AiDefinitionApiResponse;
+    try {
+      aiDefinition = await getAiDefinition(values.word);
+    } catch {
+      return { error: true };
+    }
+
     const response = await createFlashcardAction({
       word: values.word,
       definition: values.definition,
       example: values.example,
       user_id: session?.user.id ?? "no-user-id",
+      ai_definition: aiDefinition?.answer ?? "",
     });
 
     const flashcard = response.data?.at(0);

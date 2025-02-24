@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { ThemedView } from "./ThemedView";
 import { Flashcard } from "@/types/Flashcard";
 import { ThemedText } from "./ThemedText";
-import { Pressable, StyleSheet } from "react-native";
+import { Pressable, ScrollView, StyleSheet } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
@@ -18,6 +18,8 @@ const FlashCard = ({ flashcard, handleDelete, handleEdit }: Props) => {
   const errorColor = useThemeColor({}, "error");
   const logoColor = useThemeColor({}, "primaryLogoBlue");
 
+  const [aiDefinitionShown, setAiDefinitionShown] = useState(false);
+
   return (
     <ThemedView
       style={{
@@ -27,7 +29,7 @@ const FlashCard = ({ flashcard, handleDelete, handleEdit }: Props) => {
         borderRadius: 16,
       }}
     >
-      <ThemedView
+      <ScrollView
         style={{
           width: "70%",
         }}
@@ -49,7 +51,36 @@ const FlashCard = ({ flashcard, handleDelete, handleEdit }: Props) => {
         >
           {example}
         </ThemedText>
-      </ThemedView>
+
+        {flashcard.ai_definition && (
+          <Pressable
+            onPress={() => setAiDefinitionShown(!aiDefinitionShown)}
+            style={{
+              marginTop: 8,
+            }}
+          >
+            <ThemedText
+              style={{
+                color: logoColor,
+                textDecorationLine: "underline",
+              }}
+            >
+              {aiDefinitionShown ? "Hide AI Definition" : "Show AI Definition"}
+            </ThemedText>
+          </Pressable>
+        )}
+
+        {aiDefinitionShown && flashcard.ai_definition && (
+          <ThemedText
+            style={{
+              marginTop: 8,
+              color: "#b4befe",
+            }}
+          >
+            {flashcard.ai_definition}
+          </ThemedText>
+        )}
+      </ScrollView>
 
       <ThemedView
         style={{
@@ -120,6 +151,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 4,
     elevation: 9,
-    height: 120,
+    maxHeight: 200,
   },
 });

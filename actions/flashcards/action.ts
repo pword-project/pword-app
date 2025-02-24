@@ -1,5 +1,8 @@
 import { supabase } from "@/utils/supabase";
 import { PostgrestError } from "@supabase/supabase-js";
+import axios from "axios";
+
+const AI_DEFINITION_API_URL = "http://localhost:8000/word";
 
 type Flashcard = {
   id: string;
@@ -7,9 +10,15 @@ type Flashcard = {
   definition: string;
   example: string;
   user_id: string;
+  ai_definition?: string;
 };
 
 // CRUD Operations
+
+export async function getAiDefinition(word: string) {
+  const response = await axios.get(`${AI_DEFINITION_API_URL}/${word}`);
+  return response.data;
+}
 
 // Create
 export const createFlashcard = async (flashcard: Omit<Flashcard, "id">) => {
