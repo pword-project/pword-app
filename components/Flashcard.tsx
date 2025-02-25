@@ -151,6 +151,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 4,
     elevation: 9,
-    maxHeight: 200,
   },
 });

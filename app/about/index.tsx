@@ -4,6 +4,7 @@ import { ThemedView } from "@/components/ThemedView";
 import Screen from "@/components/Screen";
 import { Pressable } from "react-native-gesture-handler";
 import { useRouter } from "expo-router";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function AboutPage() {
   const router = useRouter();
@@ -72,7 +73,32 @@ export default function AboutPage() {
         </ScrollView>
 
         <View style={styles.thankYouCard}>
+          <ThemedView
+            style={{
+              flexDirection: "row",
+              alignItems: "baseline",
+              justifyContent: "center",
+              gap: 8,
+              paddingVertical: 8,
+              paddingHorizontal: 16,
+              borderRadius: 8,
+              backgroundColor: "transparent",
+            }}
+          >
+            <MaterialCommunityIcons name="robot-angry" size={24} color="#ccc" />
+            <ThemedText
+              type="smallprint"
+              style={{
+                color: "#ccc",
+                fontSize: 14,
+                fontWeight: "bold",
+              }}
+            >
+              Improved with AI
+            </ThemedText>
+          </ThemedView>
           <ThemedText style={styles.thankYouTitle}>Thank You!</ThemedText>
+
           <ThemedText style={styles.thankYouMessage}>
             We appreciate your support and hope you enjoy using Pword App. Your
             feedback is valuable to us!
