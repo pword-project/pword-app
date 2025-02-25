@@ -19,6 +19,16 @@ function PracticeScreen() {
       <ThemedText type="title">Learn through Practice</ThemedText>
 
       <InfoCard
+        title="Image Recognition"
+        paragraph="Identify the correct image based on the AI-generated description. This exercise will help you improve your ability to quickly identify the correct translation by analyzing the given description. It encourages critical thinking and reinforces your understanding of the vocabulary.Select the correct translation from a list of options. This method helps you quickly recognize the correct answer and reinforces your ability to distinguish between similar words."
+        buttonText="Start"
+        hasAi
+        onPress={() => {
+          router.push("/practice/image");
+        }}
+      />
+
+      <InfoCard
         title="Translate"
         paragraph="Write down the translation of each word we show in the flashcards. This exercise will help you reinforce your memory and improve your language skills by actively engaging with the content. Take your time to carefully think about each translation and try to recall it from memory before checking the answer. The more you practice, the better you'll get at retaining new vocabulary."
         buttonText="Start"
@@ -53,6 +63,7 @@ function PracticeScreen() {
         onPress={() => {
           router.push("/practice/listening");
         }}
+        hasAi
       />
     </Screen>
   );
